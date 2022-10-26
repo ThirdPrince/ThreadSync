@@ -25,11 +25,17 @@ public class ReentrantLockDemo {
                    } catch (InterruptedException e) {
                        e.printStackTrace();
                    }
+
                    reentrantLock.lock();
-                   if(list.size() ==5){
-                       condition.signal();
+                   try {
+                       if(list.size() ==5){
+                           condition.signal();
+                       }
+                   }finally {
+                       reentrantLock.unlock();
                    }
-                   reentrantLock.unlock();
+
+
                }
 
             }
@@ -41,11 +47,14 @@ public class ReentrantLockDemo {
                 reentrantLock.lock();
                 try {
                     condition.await();
+                    System.out.println("线程B收到通知，开始执行自己的业务：");
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                }finally {
+
+                    reentrantLock.unlock();
                 }
-                System.out.println("线程B收到通知，开始执行自己的业务：");
-                reentrantLock.unlock();
+
             }
         };
         threadB.start();
